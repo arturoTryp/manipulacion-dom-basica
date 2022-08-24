@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Onesignal In-App Message</title>
+    <style>
+      :root {
+        --TrypGreen: #00bc5e;
+        --CannabisGreen40: #8ebba0;
+        --Cannabis: #077733;
+        --Yellow40: #ece0c6;
+        --TrypGreen20: #badfcc;
+        --VerdeObscuro40: #9ca39f;
+        --VerdeObscuro: #293a30;
+        --VerdeObscuro: #293a30;
+        --Naranja40: #edc39d;
+        --Naranja: #f38f2c;
+        --Amarillo: #ffc03d;
+        --title: 26px;
+        --Crema-claro: #e7e6e0;
+      }
+
+      body {
+        margin: 0;
+        background-color: var(--Crema-claro);
+        padding-right: var(--safe-area-inset-right);
+        padding-left: var(--safe-area-inset-left);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      .center-modal {
+        position: relative;
+        background-color: var(--Crema-claro);
+        padding: 24px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 90%;
+        width: 100%;
+      }
+
+      .slide-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .question {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+      }
+
+      .question h1 {
+        margin-bottom: 10px;
+        font-size: 22px;
+        text-align: center;
+        margin-left: 0;
+      }
+
+      img {
+        width: 230px;
+        height: auto;
+      }
+
+      .question img {
+        width: 200px;
+        height: auto;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Avenir;
+        font-weight: 100px;
+        font-size: var(--title);
+        color: var(--VerdeObscuro);
+        width: 100%;
+        text-align: left;
+        margin-top: 4px;
+      }
+
+      p {
+        margin: 0;
+        font-family: Avenir;
+        font-size: 14px;
+        color: var(--VerdeObscuro);
+        margin-top: 8px;
+      }
+
+      a {
+        text-decoration: none;
+        font-family: Avenir;
+        font-weight: bold;
+        color: var(--TrypGreen);
+      }
+
+      button {
+        font-size: 16px;
+        font-family: Avenir;
+        font-weight: bold;
+        color: #fff;
+        width: 100%;
+        padding: 12px;
+        border-radius: 30px;
+        border: none;
+        margin-bottom: 12px;
+        position: absolute;
+        width: 100px;
+        bottom: 0;
+        right: 0;
+        margin-right: 12px;
+        background-color: var(--TrypGreen);
+      }
+
+      .center-modal .close-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0);
+        border: none;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        min-width: 48px;
+        min-height: 48px;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .question-1,
+      .question-2,
+      .question-3,
+      .respuestas-container {
+        display: none;
+      }
+
+      .no-display {
+        display: none;
+      }
+
+      .display-flex {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .answere {
+        padding: 8px 20px;
+        border: 1px solid;
+        border-radius: 30px;
+        font-family: avenir;
+        font-size: 12px;
+        margin: 6px 0px;
+        width: 100%;
+        border-color: var(--TrypGreen);
+      }
+
+      .answere:hover,
+      .answere-selected {
+        background-color: var(--TrypGreen);
+        color: white;
+        cursor: pointer;
+      }
+
+      .respuesta-incorrect {
+        background-color: red;
+        border-color: red;
+        color: white;
+        cursor: pointer;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-family: avenir;
+        font-size: 12px;
+        margin: 8px 0px;
+        width: 100%;
+        border: none;
+      }
+
+      .respuesta-correct {
+        background-color: var(--Cannabis);
+        color: white;
+        cursor: pointer;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-family: avenir;
+        font-size: 12px;
+        margin: 8px 0px;
+        width: 100%;
+        border: none;
+      }
+
+      .question .answere:nth-child(6) {
+        margin-bottom: 150px;
+      }
+      #respuestas-parrafo {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+
+      #respuestas-titulo {
+        font-size: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="center-modal">
+      <div class="close-button" data-onesignal-unique-label="close-button">
+        <svg
+          width="10"
+          height="10"
+          preserveAspectRatio="none"
+          viewBox="0 0 8 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.80309 1.14768C8.06564 0.885137 8.06564 0.459453 7.80309 0.196909C7.54055 -0.0656362 7.11486 -0.0656362 6.85232 0.196909L4 3.04923L1.14768 0.196909C0.885137 -0.0656362 0.459453 -0.0656362 0.196909 0.196909C-0.0656362 0.459453 -0.0656362 0.885137 0.196909 1.14768L3.04923 4L0.196909 6.85232C-0.0656362 7.11486 -0.0656362 7.54055 0.196909 7.80309C0.459453 8.06564 0.885137 8.06564 1.14768 7.80309L4 4.95077L6.85232 7.80309C7.11486 8.06564 7.54055 8.06564 7.80309 7.80309C8.06564 7.54055 8.06564 7.11486 7.80309 6.85232L4.95077 4L7.80309 1.14768Z"
+            fill="#111111"
+          />
+        </svg>
+      </div>
+
+      <!--Primera pantalla Explicación Trivia-->
+      <div class="slide-container">
+        <img
+          class="img-logo"
+          src="https://v5.airtableusercontent.com/v1/7/7/1661990400000/5suryZi20rk5jB6PcKOAPw/cNmlinENqNawRg5NeYfkYcnRFCSVSlaTgp2c2uhQ-LNYbfBUZAXwZDg9UsnqqGAKyva4VfFQY5k9CuyZEKz0bw/BzzM-SNKa3LymGC2M1KHBEAK7bFl8ybfPNJgx2Rv2Lk"
+          alt="Tryp Trivia Logo"
+        />
+        <h1>Bienvenido a la<br />Trivia Tryp</h1>
+        <p>
+          ¿Eres un experto en cannabis? ¡Demuestralo!<br />
+          Contesta 3 preguntas de manera correcta y
+          <b>obtendras un descuento</b> para tu siguiente pedido en Tryp.
+        </p>
+        <button id="button1-continuar" class="btn-comenzar">Comenzar</button>
+      </div>
+
+      <!--Pregunta 1 -->
+      <div class="question question-1">
+        <img
+          class="img-logo"
+          src="https://v5.airtableusercontent.com/v1/7/7/1661990400000/HYhs7FbVQH6r0cr3aTFbvg/RWNQVIoGF_osTlB7uyanuavi_mfQBM7ncWYkP5DS5QqOQX69IaiojbyoxFra_dB96WohpppqyOupw1RfFHoOQg/ot45HeWaoUxRpRxLA1qxB_GqaR-I8WGYLhGa2e4NrkI"
+          alt="Pregunta 1"
+        />
+        <h1 id="title-pregunta-1">
+          ¿Cuáles son las especies de cannabis que existen?
+        </h1>
+        <span id="answere-1-pregunta-1" class="answere answere-amarillo"
+          >Cannabis Sativa y Cannabis Índica</span
+        >
+        <span id="answere-2-pregunta-1" class="answere answere-amarillo"
+          >Pineapple Express, Sativa y OG Kush</span
+        >
+        <span id="answere-3-pregunta-1" class="answere answere-amarillo"
+          >Cannabis Sativa, Cannabis Índica y Cannabis Ruderalis</span
+        >
+
+        <button id="button-continuar-1" class="btn-amarillo">Continuar</button>
+      </div>
+      <!-- FIN Pregunta 1-->
+
+      <!--Pregunta 2 -->
+      <div class="question question-2">
+        <img
+          class="img-logo"
+          src="https://v5.airtableusercontent.com/v1/7/7/1661990400000/OcPWr4imfDssR_hTTbcsTA/hHSCnrjc6NYOQRpi2OmRWMw1345ZulrlTywjTCb1T5gwgrIjRkV_GNCzdh-v_VwHBNb4pftDi-wASDu55y11yg/SPZiCvV75hHriwJTefhblaxttp1GpChMXvwMSg0e83o"
+          alt="Pregunta 2"
+        />
+        <h1 id="title-pregunta-2">
+          ¿Cuánto tiempo tarda en hacer efecto un comestible?
+        </h1>
+        <span id="answere-1-pregunta-2" class="answere answere-verdeObscuro"
+          >Entre 45 minutos y una hora</span
+        >
+        <span id="answere-2-pregunta-2" class="answere answere-verdeObscuro"
+          >Entre 20 y 30 minutos</span
+        >
+        <span id="answere-3-pregunta-2" class="answere answere-verdeObscuro"
+          >De 3 a 4 horas</span
+        >
+
+        <button id="button-continuar-2" class="btn-verdeObscuro">
+          Continuar
+        </button>
+      </div>
+      <!-- FIN Pregunta 2-->
+
+      <!-- Pregunta 3 -->
+      <div class="question question-3">
+        <img
+          class="img-logo"
+          src="https://v5.airtableusercontent.com/v1/7/7/1661990400000/p6QoeDl2wgW9RK_TrwohsA/MvoyZplF3As0D1nVHAYD950sMI_OEipQX73czbU5W2OVnoA9R8xi9aOCA5zM-j3r66cjt5bmLRf1hhc2MQBaeOvzlhQgSA2tkQBRHOSb-a0/slxcp4CKNLwlqxlYbwerAgtL8g_cKnQP1Rf0hKuXkag"
+          alt="Pregunta 3"
+        />
+        <h1>
+          ¿Cuáles son las ventajas de consumir cannabis de manera recreativa en
+          lugar de alcohol?
+        </h1>
+        <span id="answere-1-pregunta-3" class="answere">
+          No tiene ventajas sobre el alcohol, son dos substancias
+          diferentes</span
+        >
+        <span id="answere-2-pregunta-3" class="answere"
+          >No genera resaca ni malestar al día siguiente y no es adictiva ni
+          daña tus neuronas</span
+        >
+        <span id="answere-3-pregunta-3" class="answere"
+          >El alcohol potencializa los efectos del cannabis</span
+        >
+
+        <button id="button-continuar-3" class="btn-verdeObscuro">
+          Continuar
+        </button>
+      </div>
+      <!-- FIN Pregunta 3-->
+
+      <!-- Respuestas -->
+      <div class="question respuestas-container">
+        <img
+          class="img-logo"
+          src="https://v5.airtableusercontent.com/v1/7/7/1661990400000/aqWRr_nbtdAG0aEi5yz3cg/tRKNlWexyfICOLxXUGI13jGeJDXlNUhbiMmZIrFhIfmfmFfW4cI6ePz2lFfJwOWlQSAX9E7p9O0H7w03z0b-oIEtMPJLVxl6gzw_V2rTGgs/sruStx8X757lziZXMt7jq7UDIG4Fv4-RvH-LHfvJA6Y"
+          alt="Pregunta 3"
+        />
+        <h1 id="respuestas-titulo"></h1>
+        <p id="respuestas-parrafo"></p>
+        <span id="respuesta-1" class="answere">[Respuesta 1]</span>
+        <span id="respuesta-2" class="answere">[Respuesta 2]</span>
+        <span id="respuesta-3" class="answere">[Respuesta 3]</span>
+
+        <button
+          id="btn-close"
+          class="btn-verdeObscuro"
+          data-onesignal-unique-label="close-button"
+        >
+          Ir a Tryp
+        </button>
+      </div>
+      <!-- FIN Pregunta 3-->
+    </div>
+
+    <script>
+      //Agregar textos exactos de Valores de las respuestas correctas
+      const correcta1 = "Cannabis Sativa, Cannabis Índica y Cannabis Ruderalis";
+      const correcta2 = "Entre 45 minutos y una hora";
+      const correcta3 =
+        "No genera resaca ni malestar al día siguiente y no es adictiva ni daña tus neuronas";
+
+      //Varibales de respuestas
+      let respuesta1;
+      let respuesta2;
+      let respuesta3;
+
+      //funcion que se corre al picar el boton Comenzar
+      document
+        .querySelector("#button1-continuar")
+        .addEventListener("click", function(e) {
+          document
+            .querySelector(".slide-container")
+            .classList.add("no-display");
+
+          document.querySelector(".question-1").classList.add("display-flex");
+        });
+
+      //Pregunta 1
+      //Seleccionar opcion styles
+
+      function switchAswererSelectedStyles(id) {
+        const numeroPregunta = id.slice(-1);
+
+        document
+          .getElementById("answere-1-pregunta-" + numeroPregunta)
+          .classList.remove("answere-selected");
+        document
+          .getElementById("answere-2-pregunta-" + numeroPregunta)
+          .classList.remove("answere-selected");
+        document
+          .getElementById("answere-3-pregunta-" + numeroPregunta)
+          .classList.remove("answere-selected");
+        document.getElementById(id).classList.add("answere-selected");
+      }
+
+      //Estilos click respuesta 1
+      document
+        .querySelector("#answere-1-pregunta-1")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+          //Asignar respuesta a variable
+          respuesta1 = document.getElementById("answere-1-pregunta-1")
+            .innerText;
+        });
+
+      //Estilos click respuesta 2 - pregunta 1
+      document
+        .querySelector("#answere-2-pregunta-1")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+          //Asignar respuesta a variable
+          respuesta1 = document.getElementById("answere-2-pregunta-1")
+            .innerText;
+        });
+
+      //Estilos click respuesta 3 - pregunta 1
+      document
+        .querySelector("#answere-3-pregunta-1")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+          //Asignar respuesta a variable
+          respuesta1 = document.getElementById("answere-3-pregunta-1")
+            .innerText;
+        });
+
+      //Boton continuar - pregunta 1
+      document
+        .querySelector("#button-continuar-1")
+        .addEventListener("click", function(e) {
+          if (respuesta1) {
+            document
+              .querySelector(".question-1")
+              .classList.remove("display-flex");
+
+            document
+              .querySelector(".question-2")
+              .classList.remove("no-display");
+            document.querySelector(".question-2").classList.add("display-flex");
+          }
+        });
+
+      //FIN PREGUNTA 1
+
+      //Pregunta 2
+      //Seleccionar opcion styles
+      //Estilos click respuesta 1 | pregunta 2
+      document
+        .querySelector("#answere-1-pregunta-2")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+
+          //Asignar respuesta a variable
+          respuesta2 = document.getElementById("answere-1-pregunta-2")
+            .innerText;
+          console.log(respuesta2);
+        });
+
+      //Estilos click respuesta 2 | pregunta 2
+      document
+        .querySelector("#answere-2-pregunta-2")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+
+          //Asignar respuesta a variable
+          respuesta2 = document.getElementById("answere-2-pregunta-2")
+            .innerText;
+          console.log(respuesta2);
+        });
+
+      //Estilos click respuesta 3 | pregunta 2
+      document
+        .querySelector("#answere-3-pregunta-2")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+          //Asignar respuesta a variable
+          respuesta2 = document.getElementById("answere-3-pregunta-2")
+            .innerText;
+
+          console.log(respuesta2);
+        });
+
+      //Boton continuar - pregunta 2
+      document
+        .querySelector("#button-continuar-2")
+        .addEventListener("click", function(e) {
+          if (respuesta2) {
+            document
+              .querySelector(".question-2")
+              .classList.remove("display-flex");
+
+            document
+              .querySelector(".question-3")
+              .classList.remove("no-display");
+            document.querySelector(".question-3").classList.add("display-flex");
+          }
+        });
+
+      //FIN PREGUNTA 2
+
+      //Pregunta 3
+      //Seleccionar opcion styles
+      //Estilos click respuesta 1 | pregunta 3
+
+      document
+        .querySelector("#answere-1-pregunta-3")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+
+          respuesta3 = document.getElementById("answere-1-pregunta-3")
+            .innerText;
+          console.log("respuesta3");
+        });
+
+      //Estilos click respuesta 2 | pregunta 3
+      document
+        .querySelector("#answere-2-pregunta-3")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+
+          //Asignar respuesta a variable
+          respuesta3 = document.getElementById("answere-2-pregunta-3")
+            .innerText;
+          console.log(respuesta3);
+        });
+
+      //Estilos click respuesta 3 | pregunta 3
+      document
+        .querySelector("#answere-3-pregunta-3")
+        .addEventListener("click", function(e) {
+          switchAswererSelectedStyles(e.target.id);
+          //Asignar respuesta a variable
+          respuesta3 = document.getElementById("answere-3-pregunta-3")
+            .innerText;
+
+          console.log(respuesta3);
+        });
+
+      //Boton continuar - pregunta 3
+      document
+        .querySelector("#button-continuar-3")
+        .addEventListener("click", function(e) {
+          if (respuesta3) {
+            document
+              .querySelector(".question-3")
+              .classList.remove("display-flex");
+
+            document
+              .querySelector(".respuestas-container")
+              .classList.add("display-flex");
+
+            //Aqui se corren validaciones de respuestas para ir a siguiente pantalla
+
+            function validarRespuesta(respuesta, correcta, index) {
+              const id = "respuesta-" + index;
+              if (respuesta == correcta) {
+                document.getElementById(id).classList.add("respuesta-correct");
+                document.getElementById(id).classList.remove("answere");
+                document.getElementById(id).innerText = respuesta;
+                return 0;
+              } else {
+                document
+                  .getElementById(id)
+                  .classList.add("respuesta-incorrect");
+                document.getElementById(id).classList.remove("answere");
+                document.getElementById(id).innerText = respuesta;
+                return 1;
+              }
+            }
+
+            const resultadoTotal =
+              validarRespuesta(respuesta1, correcta1, 1) +
+              validarRespuesta(respuesta2, correcta2, 2) +
+              validarRespuesta(respuesta3, correcta3, 3);
+
+            if (!resultadoTotal) {
+              //si el resultado total es 0 es que todas estuvieron bien
+              document.getElementById("respuestas-titulo").innerHTML =
+                "¡Eres todo un experto en el Tryp! Tu código de descuento es: <span style='color:var(--Naranja)'>TRIVIA420</span>";
+              document.getElementById("respuestas-parrafo").innerHTML =
+                "¡Toma un screenshot! Tienes 24 horas para utilizarlo. Recuerda entrar a <a href='https://gelato.media' target=”_blank”>Gelato.media</a> para estar preparado para la proxima Trypvia";
+            } else {
+              document.getElementById("respuestas-titulo").innerHTML =
+                "Lo sentimos...<br>Te hace falta ver más Gelato.";
+              document.getElementById("respuestas-parrafo").innerHTML =
+                "Entra a <a href='https://gelato.media' target=”_blank”>Gelato.media</a> para aprender más sobre el mundo del cannabis y estar preparado para la próxima Trypvia";
+            }
+          }
+        });
+
+      //FIN PREGUNTA 3
+
+      document
+        .querySelector(".close-button")
+        .addEventListener("click", function(e) {
+          OneSignalIamApi.close(e);
+        });
+
+      document
+        .querySelector("#btn-close")
+        .addEventListener("click", function(e) {
+          OneSignalIamApi.close(e);
+        });
+    </script>
+  </body>
+</html>
